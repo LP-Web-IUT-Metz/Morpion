@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>Morpion</title>
+</head>
+
+<link rel='stylesheet' href='morpion.css'>
+<body>
+
+<section>
+	<label for="typeJoueur"> Joueur vs </label></br>
+	<input type="radio" name="typeJoueur" value="1" ><label for="joueur"> joueur</label></br>
+	<input type="radio" name="typeJoueur" value="2" ><label for="ordi"> ordinateur</label></br>
+
+	<button id="creer">Nouvelle partie</button>
+</section>
+
+	<table>
+
+	</table>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+
+//	window.onload = créer();
+	$("#creer").click(function (){
+			créer();
+	});
+
+	var endgame;
+	var joueur;
+	function créer(){
+	$("input").attr('disabled', true);
+	endgame = false;
+	joueur = 1;
+
+  let tbl = $("table");
+
+  tbl.empty();
+
+     for (var i = 1; i <= 3; i++) {
+       var tr = tbl.append("<tr id='"+i+"'></tr>");
+       for (var j = 1; j <= 3; j++) {
+           $("#"+i).append("<td id='"+i+"-"+j+"' class='vide'></td>");
+  				 $("#"+ i+"-"+j).click(coche);
+     }
+   }
+}
+
+
+  function coche(){
+		if (endgame == false){
+			if(joueur == 1 && $(this).hasClass("vide")){
+				$(this).removeClass("vide");
+				$(this).addClass("Rond");
+				joueur = 2;
+				verifRond();
+				verifEgalite();
+			}
+
+		}
+
+		if (endgame == false){
+			if ($("input:checked").val() == 1){
+				if(joueur == 2 && $(this).hasClass("vide")){
+					$(this).removeClass("vide");
+					$(this).addClass("Triangle");
+					joueur = 1;
+				}
+			} else{
+				var coord = "0-0";
+				while (!$("#"+coord).hasClass("vide")){
+					var coorI = Math.floor(Math.random() * 3) +1;
+					var coorJ = Math.floor(Math.random()* 3) +1;
+					coord = coorI + "-" + coorJ;
+				}
+				if ($("#"+coord).hasClass("vide")){
+					$("#"+coord).removeClass("vide");
+					$("#"+coord).addClass("Triangle");
+					joueur = 1;
+				}
+			}
+					verifTriangle();
+					verifEgalite();
+		}
+
+
+
+  }
+
+function verifRond(){
+	for (var i = 1; i <= 3; i++) {
+		for (var j = 1; j <= 3; j++) {
+				var coord = i +"-" +j;
+				if ($("#" + coord).hasClass("Rond")){
+					for (var x=-1; x<2; x++ ){
+						for (var y=-1; y<2; y++){
+							var coordx = i+x;
+							var coordy = j+y;
+							var coordxy = coordx + "-" + coordy;
+							if (coordx>0 && coordx<=3 && coordy>0 && coordy<=3 && $("#"+coordxy).hasClass("Rond")){
+								var coorda = coordx+x;
+								var coordb = coordy+y;
+								var coordab = coorda + "-" + coordb;
+								if(coordab != coord && $("#"+coordab).hasClass("Rond")){
+									alert("Le joueur 1 (Rond) a gagné !");
+									endgame = true;
+									$("input").attr('disabled', false);
+									return;
+								}
+							}
+						}
+					}
+				}
+			}
+	}
+}
+
+function verifTriangle(){
+	for (var i = 1; i <= 3; i++) {
+		for (var j = 1; j <= 3; j++) {
+				var coord = i +"-" +j;
+				if ($("#" + coord).hasClass("Triangle")){
+					for (var x=-1; x<2; x++ ){
+						for (var y=-1; y<2; y++){
+							var coordx = i+x;
+							var coordy = j+y;
+							var coordxy = coordx + "-" + coordy;
+							if (coordx>0 && coordx<=3 && coordy>0 && coordy<=3 && $("#"+coordxy).hasClass("Triangle")){
+								var coorda = coordx+x;
+								var coordb = coordy+y;
+								var coordab = coorda + "-" + coordb;
+								if(coordab != coord && $("#"+coordab).hasClass("Triangle")){
+									alert("Le joueur 2 (Triangle) a gagné !");
+									endgame = true;
+									$("input").attr('disabled', false);
+									return;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+}
+
+function verifEgalite(){
+	var cases = 0;
+	for (var i = 1; i <= 3; i++) {
+		for (var j = 1; j <= 3; j++) {
+			var coord = i +"-" +j;
+			if (!$("#" + coord).hasClass("vide")){
+				cases ++;
+			}
+		}
+	}
+	if (cases == 9) {
+		alert("Egalité !");
+		endgame = true;
+		$("input").attr('disabled', false);
+		return;
+	}
+}
+
+
+  </script>
+</body>
+</html>
